@@ -1,0 +1,56 @@
+; ATP synthase dimer with MARTINI
+; 11 Mars 2020 Florian Blanc
+; 12 Octobre 2021 Florian Blanc
+; 
+define=-DPOSRES_BACKBONE -DPOSRES_HEADS_ON -DPOSRES_HEADS_1
+
+cutoff-scheme            = Verlet
+nstlist                  = 40
+ns_type                  = grid
+pbc                      = xyz
+verlet-buffer-tolerance  = 1e-3
+
+coulombtype              = reaction-field 
+rcoulomb                 = 1.1
+epsilon_r                = 15	; 2.5 (with polarizable water)
+epsilon_rf               = 0
+vdw_type                 = cutoff  
+vdw-modifier             = Potential-shift-verlet
+rvdw                     = 1.1
+
+constraints              = none 
+constraint_algorithm     = Lincs
+unconstrained_start 	 = no
+lincs_order              = 4
+
+integrator               = md
+dt                       = 0.02
+nsteps                   = 100000
+;nstcomm                  = 100
+;comm-grps		         = 
+; refcoord_scaling = com
+
+
+nstxout                  = 0
+nstvout                  = 0
+nstfout                  = 0
+nstlog                   = 1000
+nstenergy                = 100
+nstxout-compressed       = 5000
+compressed-x-precision   = 100
+compressed-x-grps        = 
+energygrps               = 
+
+tcoupl                   = berendsen
+tc-grps                  = Protein_HIH MEMB W_WF_Ion
+tau_t                    = 15.0 15.0 15.0
+ref_t                    = 300 300 300
+Pcoupl = no
+;Pcoupl                   = berendsen
+;Pcoupltype               = semi-isotropic
+;tau_p                    = 20.0 ;parrinello-rahman is more stable with larger tau-p, DdJ, 20130422
+;compressibility          = 3e-4 3e-4
+;ref_p                    = 1.0 1.0
+
+gen_vel                  = yes
+gen_temp                 = 300

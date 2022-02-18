@@ -1,0 +1,54 @@
+; MD simulation of ATP synthase with GROMACS
+; Parameters adapted for CHARMM36m 
+
+
+integrator  = md        ; leap-frog integrator
+nsteps      = 10000000    ; 
+dt          = 0.002     ; 2 fs
+
+
+; Output control
+nstxout     = 50000      ; save coordinates every 20 ps
+nstvout     = 50000      ; save velocities every 20 ps
+nstxtcout   = 50000      ; xtc compressed trajectory output every 20 ps
+nstenergy   = 50000      ; save energies every 20 ps
+nstlog      = 50000      ; update log file every 20 ps
+
+
+; Bond parameters
+continuation            = no       ; Restarting after NPT
+constraint_algorithm    = lincs     ; holonomic constraints
+constraints             = h-bonds ;
+lincs_iter              = 1         ; accuracy of LINCS
+lincs_order             = 4         ; also related to accuracy
+
+
+; Neighborsearching
+ns_type     = grid      ; search neighboring grid cels
+nstlist     = 5         ; 10 fs
+rlist       = 1.2       ; short-range neighborlist cutoff (in nm)
+rcoulomb    = 1.2       ; short-range electrostatic cutoff (in nm)
+rvdw        = 1.2       ; short-range van der Waals cutoff (in nm)
+cutoff-scheme           = Verlet
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+
+
+; Electrostatics
+coulombtype     = PME       ; Particle Mesh Ewald for long-range electrostatics
+
+; Temperature coupling is on
+genvel      = no
+tcoupl      = v-rescale 
+tc-grps     = Protein_ZN2_ATP_MG_ADP MEMB   TIP3_SOD_CLA     
+tau_t       = 0.1                    0.1       0.1                 
+ref_t       = 300                    300       300          
+
+Pcoupl                   = parrinello-rahman
+Pcoupltype               = anisotropic
+tau_p                    = 20.0 ;parrinello-rahman is more stable with larger tau-p, DdJ, 20130422
+compressibility          = 0.00 0.0 3e-4 0 0 0
+ref_p                    = 1.0 1.0 1.0 0 0 0
+refcoord_scaling = com
+
